@@ -1,57 +1,58 @@
 #include <Arduino.h>
 
-String ultra();
+// String ultra();
 
-const int sendPin = 10;
-const int receivePin = 11;
+#define trigPin SCL //21;  //output SCL
+#define echoPin SDA //= 20;  //input SDA
+
+// int trigPin = 10;
+// int echoPin = 11;
 
 void setup() {
     Serial.begin(115200);
+
+    pinMode(trigPin, OUTPUT);
+    pinMode(echoPin, INPUT);
 }
 
 void loop() {
-    unsigned long sendTime;
-    unsigned long receiveTime;
-    unsigned long timeBetween;
-    unsigned long distanceCm;
-    int returnValue;
+    long duration;
+    double distanceCm;
+    // int returnValue;
+    //
+    // unsigned long sendTimeMillis, receiveTimeMillis;
 
-    unsigned long sendTimeMillis, receiveTimeMillis;
-
-    digitalWrite(sendPin, HIGH);
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(5);
+    digitalWrite(trigPin, HIGH);
     delayMicroseconds(10);
-    digitalWrite(sendPin, LOW);
+    digitalWrite(trigPin, LOW);
 
-    sendTime = micros();
-    sendTimeMillis = millis();
+    // sendTimeMillis = millis();
+
+    pinMode(echoPin, INPUT);
+    duration = pulseIn(echoPin, HIGH);
+
+    // receiveTimeMillis = millis();
 
 
-    Serial.println("started timer");
-    while(digitalRead(receivePin) == 0);
-    Serial.println("begun hearing signal");
-    while(digitalRead(receivePin) == 1);
+    Serial.print("the send time in microseconds is: "); Serial.println(duration);//(unsigned long) receiveTimeMillis - sendTimeMillis);
 
-    receiveTime = micros();
-    receiveTimeMillis = millis();
+    distanceCm = (double) duration * 0.01715;
 
-    timeBetween = (unsigned long) receiveTime-sendTime;
+    // if(distanceCm < 20) returnValue = 5;
+    // else if(distanceCm < 40) returnValue = 4;
+    // else if(distanceCm < 60) returnValue = 3;
+    // else if(distanceCm < 80) returnValue = 2;
+    // else if(distanceCm < 100) returnValue = 1;
+    // else returnValue = 0;
+    // Serial.print(timeBetween);
+    // Serial.print(", ");
+    // Serial.print(distanceCm);
+    // Serial.print(", ");
+    Serial.print("the distance in cm is: "); Serial.println(distanceCm);
 
-    Serial.print("the send time in milliseconds is: "); Serial.println((unsigned long) receiveTimeMillis - sendTimeMillis);
-
-    distanceCm = 17*timeBetween/1000;
-
-    if(distanceCm < 20) returnValue = 5;
-    else if(distanceCm < 40) returnValue = 4;
-    else if(distanceCm < 60) returnValue = 3;
-    else if(distanceCm < 80) returnValue = 2;
-    else if(distanceCm < 100) returnValue = 1;
-    else returnValue = 0;
-    Serial.print(timeBetween);
-    Serial.print(", ");
-    Serial.print(distanceCm);
-    Serial.print(", ");
-    Serial.println(returnValue);
-    delay(100);
+    delay(1000);
 }
 
 // String ultra() {
